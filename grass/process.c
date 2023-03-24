@@ -18,6 +18,21 @@ void excp_entry(int id) {
     /* Student's code goes here (handle memory exception). */
 
     /* If id is for system call, handle the system call and return */
+    //asm("csrr %0, mepc" : "=r"(mepc));
+    if (id == 5 || id == 7){
+        //memory fault
+        INFO("process %d killed by memory exception", curr_pid);
+        asm("csrw mepc, %0" ::"r"(0x800500C));
+        return;
+    }
+    if (id == 8 || id == 11) {
+        intr_entry(3);
+        int mepc;
+        asm("csrr %0, mepc" : "=r"(mepc));
+        asm("csrw mepc, %0" ::"r"(mepc+4));
+        //mret;
+        return;
+    }
 
     /* Otherwise, kill the process if curr_pid is a user application */
 
