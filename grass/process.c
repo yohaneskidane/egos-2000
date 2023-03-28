@@ -48,13 +48,22 @@ void proc_init() {
     /* Student's code goes here (PMP memory protection). */
 
     /* Setup PMP TOR region 0x00000000 - 0x20000000 as r/w/x */
+    asm("csrw pmp0cfg, %0" ::"r"(0x0F));
+    // 0x0F
+    asm("csrw pmpaddr0, %0" ::"r"((0x20000000) >> 2));
 
     /* Setup PMP NAPOT region 0x20400000 - 0x20800000 as r/-/x */
+    asm("csrw pmp1cfg, %0" ::"r"(0x1D));
+    
+    asm("csrw pmpaddr1, %0" ::"r"((0x20400000 >> 2) | 0x7FFFF));
 
     /* Setup PMP NAPOT region 0x20800000 - 0x20C00000 as r/-/- */
+    asm("csrw pmp2cfg, %0" ::"r"(0x11));
+    asm("csrw pmpaddr2, %0" ::"r"((0x20800000 >> 2) | 0x7FFFF));
 
     /* Setup PMP NAPOT region 0x80000000 - 0x80004000 as r/w/- */
-
+    asm("csrw pmp3cfg, %0" ::"r"(0x1B));
+    asm("csrw pmpaddr3, %0" ::"r"((0x80000000 >> 2) | 0b0111111111111));//0xFFF));
     /* Student's code ends here. */
 
     /* The first process is currently running */
